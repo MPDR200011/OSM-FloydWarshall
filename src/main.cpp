@@ -1,11 +1,4 @@
-#include <iostream>
-#include <cstring>
-#include <sstream>
 #include <fstream>
-#include <cmath>
-#include <set>
-#include "rapidxml.hpp"
-#include "rapidxml_print.hpp"
 #include "graph.h"
 #include "graph-viewer/graphviewer.h"
 #include "parser/OSMParser.h"
