@@ -8,3 +8,5 @@
 build
 tags
 *.osm
+.idea
+cmake-build-debug
