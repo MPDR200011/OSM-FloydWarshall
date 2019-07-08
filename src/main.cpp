@@ -3,6 +3,7 @@
 #include "graph-viewer/graphviewer.h"
 #include "parser/OSMParser.h"
 #include "FloydWarshallAlgorithm.h"
+#include "reader.h"
 
 using namespace std;
 
@@ -28,7 +29,6 @@ void drawGraph(Graph<Position>& graph, double minLon, double minLat) {
 }
 
 int main() {
-
     ifstream inFile("corredoura.osm");
 
     OSMParser parser(&inFile);
@@ -39,10 +39,18 @@ int main() {
 
     drawGraph(graph, parser.getMinLon(), parser.getMinLat());
 
-    vector<Vertex<Position>*> path = algo.getPath(6360014905, 6360014917);
+    ofstream outfile("out.txt", std::ios::trunc);
 
-    for (Vertex<Position>* v: path) {
-        gv.setVertexColor(v->getVertexID(), RED);
+    algo.save(outfile);
+
+    outfile.close();
+    Reader reader("out.txt");
+
+
+    vector<unsigned long> path = reader.getPath(6360014905, 6360014917);
+
+    for (unsigned long v: path) {
+        gv.setVertexColor(v, RED);
     }
 
     return 0;

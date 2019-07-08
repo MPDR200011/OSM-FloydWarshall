@@ -12,6 +12,7 @@
 template <class T>
 class FloydWarshallAlgorithm {
     bool wasRun;
+    std::size_t numVertices;
     Graph<T>* graph;
     double** distMatrix;
     Vertex<T>*** nextMatrix;
@@ -22,6 +23,8 @@ public:
 
     void run();
 
+    void save(std::ostream& out);
+
     std::vector<Vertex<T>*> getPath(unsigned long srcID, unsigned long destID) const;
 };
 
@@ -30,7 +33,7 @@ FloydWarshallAlgorithm<T>::FloydWarshallAlgorithm(Graph<T>* graph) {
     this->wasRun = false;
     this->graph = graph;
 
-    size_t numVertices = graph->getVertexSet().size();
+    this->numVertices = graph->getVertexSet().size();
     
     this->distMatrix = new double*[numVertices];
     this->nextMatrix = new Vertex<T>**[numVertices];
@@ -96,6 +99,44 @@ void FloydWarshallAlgorithm<T>::run() {
     }
 
     wasRun = true;
+}
+
+template<class T>
+void FloydWarshallAlgorithm<T>::save(std::ostream &out) {
+    //Write number of vertices
+    out.write((char*)&numVertices, sizeof(size_t));
+
+    //Write distMatrix base
+    size_t distMatrixBase = 3*sizeof(size_t) + numVertices*sizeof(size_t) + numVertices*sizeof(unsigned long);
+    out.write((char*) &distMatrixBase, sizeof(size_t));
+
+    size_t nextMatrixBase = distMatrixBase + numVertices*numVertices*sizeof(double);
+    out.write((char*) &nextMatrixBase, sizeof(size_t));
+
+    //Write index map
+    for (auto v: indexMap) {
+        unsigned long id = v.first->getVertexID();
+        out.write((char*) &id, sizeof(unsigned long));
+        out.write((char*) &v.second, sizeof(size_t));
+    }
+
+    //Write distMAtrix
+    for(size_t i = 0; i < numVertices; i++){
+        out.write((char*) distMatrix[i], sizeof(double)*numVertices);
+    }
+
+    //Write nextMatrix
+    for(size_t i = 0; i < numVertices; i++){
+        for(size_t j = 0; j < numVertices; j++){
+            unsigned long null = 0;
+            if (nextMatrix[i][j] != nullptr) {
+                unsigned long id = nextMatrix[i][j]->getVertexID();
+                out.write((char*) &id, sizeof(unsigned long));
+            } else {
+                out.write((char*) &null, sizeof(unsigned long));
+            }
+        }
+    }
 }
 
 template<class T>
