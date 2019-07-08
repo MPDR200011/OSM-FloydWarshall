@@ -19,7 +19,6 @@ Reader::Reader(string fileName) {
         size_t index;
 
         file.read((char*) &id, sizeof(unsigned long));
-        cout << id << endl;
         file.read((char*) &index, sizeof(size_t));
 
         indexMap.insert(make_pair(id, index));

@@ -46,7 +46,6 @@ int main() {
     outfile.close();
     Reader reader("out.txt");
 
-
     vector<unsigned long> path = reader.getPath(6360014905, 6360014917);
 
     for (unsigned long v: path) {
